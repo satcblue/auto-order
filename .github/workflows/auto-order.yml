@@ -25,7 +25,8 @@ jobs:
           secretKey: ${{ secrets.SECRET_KEY }}
           messageTemplateId: ${{ secrets.MESSAGE_TEMPLATE_ID }}
           phone: ${phone}
-        run: mvn compile exec:java -Dexec.mainClass="cn.satc.order.Main"\
+        run: mvn install exec:java -Dexec.mainClass="cn.satc.order.AutoOrderApplication"\
+        -Dexec:classpathScope=runtime\
         -Dmeican.username=${username} -Dmeican.password=${password}\
         -DmeiCan.cookie=${cookie} -Dtencent.sms.appId=${appId} -Dtencent.sms.secretId=${secretId}\
         -Dtencent.sms.secretKey=${secretKey} -Dtencent.sms.messageTemplateId=${messageTemplateId}\

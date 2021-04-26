@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.satc.order.exception.BusinessException;
 import cn.satc.order.meican.dto.Calendar;
 import cn.satc.order.meican.dto.DishOrder;
 import cn.satc.order.meican.dto.MultiCorpAddress;
@@ -19,15 +18,19 @@ import cn.satc.order.meican.service.PreorderService;
 import cn.satc.order.notify.tencent.SmsMessage;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nonnull;
-import java.time.*;
+import javax.annotation.PostConstruct;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,6 +44,9 @@ public class OrderMain {
 
     private PreorderService preorderService;
     private SmsMessage smsMessage;
+    private OauthService oauthService;
+
+    private OrderMain orderMain;
 
 
     public void order(Member member) {
@@ -171,5 +177,25 @@ public class OrderMain {
     @Autowired
     public void setSmsMessage(SmsMessage smsMessage) {
         this.smsMessage = smsMessage;
+    }
+
+    @Autowired
+    public void setOauthService(OauthService oauthService) {
+        this.oauthService = oauthService;
+    }
+
+    @Autowired
+    public void setOrderMain(OrderMain orderMain) {
+        this.orderMain = orderMain;
+    }
+
+    @PostConstruct
+    public void onApplicationEvent() {
+        Member member = new Member();
+        member.setUsername(System.getProperty("meican.username"));
+        member.setPassword(System.getProperty("meican.password"));
+        this.oauthService.loginByUsernameAndPassword(member);
+        this.orderMain.order(member);
+//        System.exit(0);
     }
 }
