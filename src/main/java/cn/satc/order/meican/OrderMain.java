@@ -162,7 +162,7 @@ public class OrderMain {
         if (msg == null || msg.length < 2) {
             return;
         }
-        String phone = System.getProperty("notify.phone");
+        String phone = System.getProperty("phone");
         if (CharSequenceUtil.isBlank(phone)) {
             return;
         }
@@ -192,8 +192,8 @@ public class OrderMain {
     @PostConstruct
     public void onApplicationEvent() {
         Member member = new Member();
-        member.setUsername(System.getProperty("meican.username"));
-        member.setPassword(System.getProperty("meican.password"));
+        member.setUsername(System.getProperty("username"));
+        member.setPassword(System.getProperty("password"));
         this.oauthService.loginByUsernameAndPassword(member);
         this.orderMain.order(member);
 //        System.exit(0);

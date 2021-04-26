@@ -17,11 +17,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class SmsConfig {
 
-    private static final String APP_ID = "tencent.sms.appId";
-    private static final String SECRET_ID = "tencent.sms.secretId";
-    private static final String SECRET_KEY = "tencent.sms.secretKey";
-    private static final String TEMPLATE_ID = "tencent.sms.messageTemplateId";
-    private static final String SIGN = "tencent.sms.sign";
+    private static final String APP_ID = "appId";
+    private static final String SECRET_ID = "secretId";
+    private static final String SECRET_KEY = "secretKey";
+    private static final String TEMPLATE_ID = "messageTemplateId";
+    private static final String SIGN = "sign";
 
 
     private final String appId;
