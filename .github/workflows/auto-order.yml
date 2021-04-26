@@ -34,4 +34,4 @@ jobs:
           messageTemplateId: ${{ secrets.MESSAGE_TEMPLATE_ID }}
           sign: ${{ secrets.SIGN }}
           phone: ${{ secrets.PHONE }}
-        run: mvn install exec:java -Dexec.mainClass="cn.satc.order.AutoOrderApplication" -Dexec:classpathScope=runtime -Dmeican.username=${username} -Dmeican.password=${password} -DmeiCan.cookie=${cookie} -Dtencent.sms.appId=${appId} -Dtencent.sms.secretId=${secretId} -Dtencent.sms.sign=${sign} -Dtencent.sms.secretKey=${secretKey} -Dtencent.sms.messageTemplateId=${messageTemplateId} -Dnotify.phone=${phone}
+        run: mvn install exec:java -Dexec.mainClass="cn.satc.order.AutoOrderApplication" -Dexec:classpathScope=runtime -Dmeican.username="${username}" -Dmeican.password="${password}" -DmeiCan.cookie="${cookie}" -Dtencent.sms.appId="${appId}" -Dtencent.sms.secretId="${secretId}" -Dtencent.sms.sign="${sign}" -Dtencent.sms.secretKey="${secretKey}" -Dtencent.sms.messageTemplateId="${messageTemplateId}" -Dnotify.phone="${phone}"

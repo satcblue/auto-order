@@ -40,7 +40,7 @@ public class SmsConfig {
         Preconditions.checkArgument(CharSequenceUtil.isNotBlank(secretId), "密钥id不能为空");
         Preconditions.checkArgument(CharSequenceUtil.isNotBlank(secretKey), "密钥key不能为空");
         Preconditions.checkArgument(CharSequenceUtil.isNotBlank(templateId), "短信模板id不能为空");
-        Preconditions.checkArgument(CharSequenceUtil.isNotBlank(sign), "短信前面不能为空");
+        Preconditions.checkArgument(CharSequenceUtil.isNotBlank(sign), "短信签名不能为空");
 
     }
 }
