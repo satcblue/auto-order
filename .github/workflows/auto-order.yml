@@ -1,5 +1,11 @@
 name: order-daily
 on:
+  workflow_dispatch:
+    inputs:
+      test:
+        description: '只是测试而已'
+        required: false
+        default: 'ok'
   schedule:
     # 定时任务，在每天的19点30执行任务
     - cron: '30 11 * * *'
