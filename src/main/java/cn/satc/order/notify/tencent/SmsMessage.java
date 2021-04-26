@@ -27,12 +27,14 @@ public class SmsMessage {
     private final SmsClient smsClient;
     private final String appId;
     private final String templateId;
+    private final String sign;
 
     public SmsMessage(SmsConfig smsConfig) {
         this.appId = smsConfig.getAppId();
         this.templateId = smsConfig.getTemplateId();
         Credential cred = new Credential(smsConfig.getSecretId(), smsConfig.getSecretKey());
         this.smsClient = new SmsClient(cred, "ap-guangzhou");
+        this.sign = smsConfig.getSign();
     }
 
     public void notify(String[] templateParams, String ...phone) {
@@ -42,7 +44,7 @@ public class SmsMessage {
         }
         SendSmsRequest req = new SendSmsRequest();
         req.setSmsSdkAppid(this.appId);
-        req.setSign("satcblue");
+        req.setSign(sign);
         req.setTemplateID(this.templateId);
         req.setPhoneNumberSet(phone);
         req.setTemplateParamSet(ss.toArray(new String[0]));

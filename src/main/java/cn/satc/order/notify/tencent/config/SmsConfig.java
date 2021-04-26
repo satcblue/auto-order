@@ -21,21 +21,26 @@ public class SmsConfig {
     private static final String SECRET_ID = "tencent.sms.secretId";
     private static final String SECRET_KEY = "tencent.sms.secretKey";
     private static final String TEMPLATE_ID = "tencent.sms.messageTemplateId";
+    private static final String SIGN = "tencent.sms.sign";
+
 
     private final String appId;
     private final String secretId;
     private final String secretKey;
     private final String templateId;
+    private final String sign;
 
     public SmsConfig() {
         this.appId = System.getProperty(APP_ID);
         this.secretId = System.getProperty(SECRET_ID);
         this.secretKey = System.getProperty(SECRET_KEY);
         this.templateId = System.getProperty(TEMPLATE_ID);
+        this.sign = System.getProperty(SIGN);
         Preconditions.checkArgument(CharSequenceUtil.isNotBlank(appId), "短信应用id不能为空");
         Preconditions.checkArgument(CharSequenceUtil.isNotBlank(secretId), "密钥id不能为空");
         Preconditions.checkArgument(CharSequenceUtil.isNotBlank(secretKey), "密钥key不能为空");
         Preconditions.checkArgument(CharSequenceUtil.isNotBlank(templateId), "短信模板id不能为空");
+        Preconditions.checkArgument(CharSequenceUtil.isNotBlank(sign), "短信前面不能为空");
 
     }
 }
