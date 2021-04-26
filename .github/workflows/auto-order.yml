@@ -19,6 +19,8 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
       - name: execute the task
         env:
+          username: ${{ secrets.USER_NAME }}
+          password: ${{ secrets.PASSWORD }}
           cookie: ${{ secrets.COOKIE }}
           appId: ${{ secrets.APP_ID }}
           secretId: ${{ secrets.SECRET_ID }}
