@@ -1,14 +1,18 @@
 package cn.satc.order.config;
 
+import okhttp3.Cache;
 import okhttp3.OkHttpClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -61,5 +65,16 @@ public class OkHttp3Config {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @PreDestroy
+    @Autowired
+    public void destroy(OkHttpClient client) throws IOException {
+        client.dispatcher().executorService().shutdown();   //清除并关闭线程池
+        client.connectionPool().evictAll();                 //清除并关闭连接池
+        Cache cache = client.cache();
+        if ( cache != null) {
+            cache.close();
+        }
     }
 }
