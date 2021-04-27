@@ -6,4 +6,8 @@ meican:
     dish-name-deny:
       - 辣
     max-pay: 1500
+    restaurant-deny:
+      - 1234
+    dish-deny:
+      - 1234
 

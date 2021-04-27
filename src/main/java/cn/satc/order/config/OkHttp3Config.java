@@ -28,12 +28,15 @@ public class OkHttp3Config {
     @Resource
     private RetryInterceptor retryInterceptor;
 
+    private OkHttpClient okHttpClient = null;
+
     @Bean
     OkHttpClient okHttpClient() {
-        return new OkHttpClient.Builder()
+        this.okHttpClient = new OkHttpClient.Builder()
                 .sslSocketFactory(sslSocketFactory(), x509TrustManager())
                 .addInterceptor(retryInterceptor)
                 .build();
+        return this.okHttpClient;
     }
 
     @Bean
@@ -68,11 +71,13 @@ public class OkHttp3Config {
     }
 
     @PreDestroy
-    @Autowired
-    public void destroy(OkHttpClient client) throws IOException {
-        client.dispatcher().executorService().shutdown();   //清除并关闭线程池
-        client.connectionPool().evictAll();                 //清除并关闭连接池
-        Cache cache = client.cache();
+    public void destroy() throws IOException {
+        if (this.okHttpClient == null) {
+            return;
+        }
+        this.okHttpClient.dispatcher().executorService().shutdown();   //清除并关闭线程池
+        this.okHttpClient.connectionPool().evictAll();                 //清除并关闭连接池
+        Cache cache = this.okHttpClient.cache();
         if ( cache != null) {
             cache.close();
         }
