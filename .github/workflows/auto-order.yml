@@ -25,13 +25,13 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
       - name: execute the task
         env:
-          username: ${{ secrets.USER_NAME }}
-          password: ${{ secrets.PASSWORD }}
-          cookie: ${{ secrets.COOKIE }}
-          appId: ${{ secrets.APP_ID }}
-          secretId: ${{ secrets.SECRET_ID }}
-          secretKey: ${{ secrets.SECRET_KEY }}
-          messageTemplateId: ${{ secrets.MESSAGE_TEMPLATE_ID }}
-          sign: ${{ secrets.SIGN }}
-          phone: ${{ secrets.PHONE }}
-        run: mvn install exec:java -Dexec.mainClass="cn.satc.order.AutoOrderApplication" -Dexec:classpathScope=runtime
+          MEI_CAN_USERNAME: ${{ secrets.USER_NAME }}
+          MEI_CAN_PASSWORD: ${{ secrets.PASSWORD }}
+          MEI_CAN_COOKIE: ${{ secrets.COOKIE }}
+          TENCENT_SMS_APP_ID: ${{ secrets.APP_ID }}
+          TENCETN_SECRET_ID: ${{ secrets.SECRET_ID }}
+          TENCENT_SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          TENCENT_SMS_MESSAGE_TEMPLATE_ID: ${{ secrets.MESSAGE_TEMPLATE_ID }}
+          TENCENT_SMS_SIGN: ${{ secrets.SIGN }}
+          SATC_ORDER_PHONE: ${{ secrets.PHONE }}
+        run: mvn install exec:java -Dexec.mainClass="cn.satc.order.AutoOrderApplication" -Dexec:classpathScope=runtime -DMEI_CAN_USERNAME=${MEI_CAN_USERNAME} -DMEI_CAN_PASSWORD=${MEI_CAN_PASSWORD} -DMEI_CAN_COOKIE=${DMEI_CAN_COOKIE} -DTENCENT_SMS_APP_ID=${TENCENT_SMS_APP_ID} -DTENCETN_SECRET_ID=${TENCETN_SECRET_ID} -DTENCENT_SECRET_KEY=${TENCENT_SECRET_KEY} -DTENCENT_SMS_MESSAGE_TEMPLATE_ID=${TENCENT_SMS_MESSAGE_TEMPLATE_ID} -DTENCENT_SMS_SIGN=${TENCENT_SMS_SIGN} -DSATC_ORDER_PHONE=${SATC_ORDER_PHONE}

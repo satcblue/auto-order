@@ -11,6 +11,7 @@ import com.tencentcloudapi.sms.v20190711.SmsClient;
 import com.tencentcloudapi.sms.v20190711.models.SendSmsRequest;
 import com.tencentcloudapi.sms.v20190711.models.SendSmsResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -20,7 +21,6 @@ import java.util.List;
  * @date 2021/4/25
  * @since 0.0.1
  */
-@Component
 @Slf4j
 public class SmsMessage {
 

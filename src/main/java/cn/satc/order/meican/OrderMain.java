@@ -158,11 +158,14 @@ public class OrderMain {
     }
 
     private void sendMsg(String[] msg) {
+        if (smsMessage == null) {
+            return;
+        }
         // 模板值数量不匹配
         if (msg == null || msg.length < 2) {
             return;
         }
-        String phone = System.getProperty("phone");
+        String phone = System.getProperty("SATC_ORDER_PHONE");
         if (CharSequenceUtil.isBlank(phone)) {
             return;
         }
@@ -190,10 +193,10 @@ public class OrderMain {
     }
 
     @PostConstruct
-    public void onApplicationEvent() {
+    public void init() {
         Member member = new Member();
-        member.setUsername(System.getProperty("username"));
-        member.setPassword(System.getProperty("password"));
+        member.setUsername(System.getProperty("MEI_CAN_USERNAME"));
+        member.setPassword(System.getProperty("MEI_CAN_PASSWORD"));
         this.oauthService.loginByUsernameAndPassword(member);
         this.orderMain.order(member);
 //        System.exit(0);

@@ -4,7 +4,9 @@ import cn.hutool.core.text.CharSequenceUtil;
 import com.google.common.base.Preconditions;
 import lombok.Getter;
 import lombok.ToString;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * 腾讯云短信配置
@@ -14,33 +16,22 @@ import org.springframework.stereotype.Component;
  */
 @Getter
 @ToString
-@Component
 public class SmsConfig {
-
-    private static final String APP_ID = "appId";
-    private static final String SECRET_ID = "secretId";
-    private static final String SECRET_KEY = "secretKey";
-    private static final String TEMPLATE_ID = "messageTemplateId";
-    private static final String SIGN = "sign";
-
-
     private final String appId;
     private final String secretId;
     private final String secretKey;
     private final String templateId;
     private final String sign;
-
-    public SmsConfig() {
-        this.appId = System.getProperty(APP_ID);
-        this.secretId = System.getProperty(SECRET_ID);
-        this.secretKey = System.getProperty(SECRET_KEY);
-        this.templateId = System.getProperty(TEMPLATE_ID);
-        this.sign = System.getProperty(SIGN);
+    public SmsConfig(String appId, String secretId, String secretKey, String templateId, String sign) {
         Preconditions.checkArgument(CharSequenceUtil.isNotBlank(appId), "短信应用id不能为空");
         Preconditions.checkArgument(CharSequenceUtil.isNotBlank(secretId), "密钥id不能为空");
         Preconditions.checkArgument(CharSequenceUtil.isNotBlank(secretKey), "密钥key不能为空");
         Preconditions.checkArgument(CharSequenceUtil.isNotBlank(templateId), "短信模板id不能为空");
         Preconditions.checkArgument(CharSequenceUtil.isNotBlank(sign), "短信签名不能为空");
-
+        this.appId = appId;
+        this.secretId = secretId;
+        this.secretKey = secretKey;
+        this.templateId = templateId;
+        this.sign = sign;
     }
 }
