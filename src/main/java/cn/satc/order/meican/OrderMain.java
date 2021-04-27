@@ -137,7 +137,7 @@ public class OrderMain {
             }
             AddOrderParam addOrderParam = dos.getAddOrderParam();
             preorderService.addOrder(member, addOrderParam);
-            notifyMessage.add(dos.getDish().getName());
+            notifyMessage.add(StrUtil.subBefore(dos.getDish().getName(), '(', false));
         });
 
         // 4. 提醒
