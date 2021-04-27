@@ -185,7 +185,9 @@ public class OrderMain {
         if (restaurantList == null) {
             return Lists.newArrayList();
         }
-        return restaurantList.stream().filter(restaurant -> !StrUtil.equalsAny(restaurant
+        return restaurantList.stream()
+                .filter(Restaurant::isOpen)
+                .filter(restaurant -> !StrUtil.equalsAny(restaurant
                         .getName(),
                 orderFilterConfigProperties.getRestaurantDeny().toArray(new String[0]))).collect(Collectors.toList());
     }
