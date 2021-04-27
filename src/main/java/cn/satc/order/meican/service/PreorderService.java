@@ -124,26 +124,6 @@ public class PreorderService {
         throw new BusinessException(BusinessException.BusinessStatus.networkException);
     }
 
-    public Corp getCorp(Member member, String namespace) {
-        HttpUrl httpUrl = new Request.Builder().url(UrlConstant.CORPS_SHOW_URL).build().url().newBuilder()
-                .addQueryParameter("namespace", namespace)
-                .build();
-        Request request = new Request.Builder().url(httpUrl).header("Cookie", member.getCookies()).get().build();
-        try {
-            ResponseBody responseBody = okHttpClient.newCall(request).execute().body();
-            if (Objects.nonNull(responseBody)) {
-                if (!Objects.equals(responseBody.contentType(), MediaType.parse("text/html; charset=utf-8"))) {
-                    String body = responseBody.string();
-                    return JSON.parseObject(body, Corp.class);
-                }
-                throw new BusinessException(BusinessException.BusinessStatus.cookieExpire);
-            }
-        } catch (IOException e) {
-            log.error("PreorderService.getCorp Exception:{}", e.getMessage());
-        }
-        throw new BusinessException(BusinessException.BusinessStatus.networkException);
-    }
-
     /**
      * 获取指定时间的菜单
      *
@@ -175,26 +155,6 @@ public class PreorderService {
         throw new BusinessException(BusinessException.BusinessStatus.networkException);
     }
 
-    public CartQueryResponse cartQuery(Member member, String closeTime, String tabUUID) {
-        RequestBody requestBody = new FormBody.Builder()
-                .addEncoded("closeTime", closeTime)
-                .addEncoded("tabUUID", tabUUID)
-                .build();
-        Request request = new Request.Builder().url(UrlConstant.CART_QUERY_URL).header("Cookie", member.getCookies()).post(requestBody).build();
-        try {
-            ResponseBody responseBody = okHttpClient.newCall(request).execute().body();
-            if (Objects.nonNull(responseBody)) {
-                if (!Objects.equals(responseBody.contentType(), MediaType.parse("text/html; charset=utf-8"))) {
-                    String body = responseBody.string();
-                    return JSON.parseObject(body, CartQueryResponse.class);
-                }
-                throw new BusinessException(BusinessException.BusinessStatus.cookieExpire);
-            }
-        } catch (IOException e) {
-            log.error("PreorderService.cartQuery Exception:{}", e.getMessage());
-        }
-        throw new BusinessException(BusinessException.BusinessStatus.networkException);
-    }
 
     public AddOrderResponse addOrder(Member member, AddOrderParam param) {
         RequestBody requestBody = new FormBody.Builder()
@@ -244,51 +204,6 @@ public class PreorderService {
             }
         } catch (IOException e) {
             log.error("PreorderService.getMultiCorpAddress Exception:{}", e.getMessage());
-        }
-        throw new BusinessException(BusinessException.BusinessStatus.networkException);
-    }
-
-    public Order getOrder(Member member, String uniqueId, String type, boolean progressMarkdownSupport) {
-        HttpUrl httpUrl = new Request.Builder().url(UrlConstant.ORDERS_SHOW_URL).build().url().newBuilder()
-                .addEncodedQueryParameter("uniqueId", uniqueId)
-                .addEncodedQueryParameter("type", type)
-                .addEncodedQueryParameter("progressMarkdownSupport", String.valueOf(progressMarkdownSupport))
-                .addEncodedQueryParameter("x", String.valueOf(System.currentTimeMillis()))
-                .build();
-        Request request = new Request.Builder().url(httpUrl).header("Cookie", member.getCookies()).get().build();
-        try {
-            ResponseBody responseBody = okHttpClient.newCall(request).execute().body();
-            if (Objects.nonNull(responseBody)) {
-                if (!Objects.equals(responseBody.contentType(), MediaType.parse("text/html; charset=utf-8"))) {
-                    String body = responseBody.string();
-                    return JSON.parseObject(body, Order.class);
-                }
-                throw new BusinessException(BusinessException.BusinessStatus.cookieExpire);
-            }
-        } catch (IOException e) {
-            log.error("PreorderService.getOrder Exception:{}", e.getMessage());
-        }
-        throw new BusinessException(BusinessException.BusinessStatus.networkException);
-    }
-
-    public ClosetOrder getClosetOrder(Member member, String uniqueId) {
-        HttpUrl httpUrl = new Request.Builder().url(UrlConstant.ORDERS_CLOSET_SHOW_URL).build().url().newBuilder()
-                .addEncodedQueryParameter("uniqueId", uniqueId)
-                .build();
-        Request request = new Request.Builder().url(httpUrl).header("Cookie", member.getCookies()).get().build();
-        try {
-            ResponseBody responseBody = okHttpClient.newCall(request).execute().body();
-            if (Objects.nonNull(responseBody)) {
-                if (!Objects.equals(responseBody.contentType(), MediaType.parse("text/html; charset=utf-8"))) {
-                    String body = responseBody.string();
-                    BaseResponse<ClosetOrder> closetOrderBaseResponse = JSON.parseObject(body, new TypeReference<BaseResponse<ClosetOrder>>() {
-                    });
-                    return closetOrderBaseResponse.getData();
-                }
-                throw new BusinessException(BusinessException.BusinessStatus.cookieExpire);
-            }
-        } catch (IOException e) {
-            log.error("PreorderService.getClosetOrder Exception:{}", e.getMessage());
         }
         throw new BusinessException(BusinessException.BusinessStatus.networkException);
     }
