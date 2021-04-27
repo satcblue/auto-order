@@ -1,6 +1,7 @@
 package cn.satc.order.meican.dto;
 
 import cn.satc.order.meican.dto.model.Dish;
+import cn.satc.order.meican.dto.model.Restaurant;
 import cn.satc.order.meican.dto.request.AddOrderParam;
 import lombok.Data;
 

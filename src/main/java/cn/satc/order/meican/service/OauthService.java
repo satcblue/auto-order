@@ -1,6 +1,7 @@
 package cn.satc.order.meican.service;
 
 import cn.satc.order.exception.BusinessException;
+import cn.satc.order.meican.MeiCanOauth2ConfigProperties;
 import cn.satc.order.meican.constant.UrlConstant;
 import cn.satc.order.meican.dto.model.Member;
 import cn.satc.order.meican.dto.response.TokenResponse;
@@ -8,6 +9,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -27,15 +29,13 @@ public class OauthService {
 
     @Resource
     private OkHttpClient okHttpClient;
-    @Value("${meican.oauth2.clientId}")
-    private String clientId;
-    @Value("${meican.oauth2.clientSecret}")
-    private String clientSecret;
+
+    private MeiCanOauth2ConfigProperties meiCanOauth2ConfigProperties;
 
     public Member loginByUsernameAndPassword(@Nonnull Member member) {
         FormBody formBody = new FormBody.Builder()
-                .add("client_id", clientId)
-                .add("client_secret", clientSecret)
+                .add("client_id", meiCanOauth2ConfigProperties.getClientId())
+                .add("client_secret", meiCanOauth2ConfigProperties.getClientSecret())
                 .add("grant_type", "password")
                 .add("meican_credential_type", "password")
                 .add("username", member.getUsername())
@@ -67,5 +67,10 @@ public class OauthService {
             log.error("请求出错:{}", e.getMessage());
         }
         throw new BusinessException(BusinessException.BusinessStatus.networkException);
+    }
+
+    @Autowired
+    public void setMeiCanOauth2ConfigProperties(MeiCanOauth2ConfigProperties meiCanOauth2ConfigProperties) {
+        this.meiCanOauth2ConfigProperties = meiCanOauth2ConfigProperties;
     }
 }

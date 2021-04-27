@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.satc.order.config.OrderFilterConfigProperties;
 import cn.satc.order.meican.dto.Calendar;
 import cn.satc.order.meican.dto.DishOrder;
 import cn.satc.order.meican.dto.MultiCorpAddress;
@@ -19,14 +20,14 @@ import cn.satc.order.meican.service.PreorderService;
 import cn.satc.order.notify.tencent.SmsMessage;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import java.time.*;
 import java.util.*;
@@ -46,14 +47,16 @@ public class OrderMain {
 
     private OrderMain orderMain;
 
+    private OrderFilterConfigProperties orderFilterConfigProperties;
+
 
     public void order(Member member) {
         if (member == null || CharSequenceUtil.isBlank(member.getCookies())) {
             return;
         }
 
-        Date nextDay = Date.from(ZonedDateTime.of(LocalDateTimeUtil.beginOfDay(LocalDateTime.now().plusDays(1)),
-                ZoneOffset.ofHours(8)).toInstant());
+        Date nextDay = Date.from(LocalDateTimeUtil.beginOfDay(LocalDateTime.now().plusDays(1))
+                        .atOffset(ZoneOffset.ofHours(8)).toInstant());
 
         // 2. 获取明天可点餐时间段(北京时间)
         List<Calendar> calendars = preorderService.getCalendarList(member, nextDay);
@@ -79,7 +82,8 @@ public class OrderMain {
             RestaurantResponse restaurantResponse = preorderService.getRestaurant(member,
                     tabUnionId, targetTime);
             List<Restaurant> restaurantList = restaurantResponse.getRestaurantList();
-            if (CollUtil.isEmpty(restaurantList)) {
+            if (restaurantList == null || CollUtil.isEmpty(restaurantList =
+                    filterRestaurant(restaurantList))) {
                 notifyMessage.add("没有可选择的餐厅");
                 continue;
             }
@@ -99,25 +103,12 @@ public class OrderMain {
                     continue;
                 }
                 dishList.stream()
+                        .filter(Objects::nonNull)
                         .filter(dish -> !dish.isSection())
-                        .filter(dish -> dish.getPriceInCent() <= 1500)
+                        .filter(dish -> dish.getPriceInCent() <= orderFilterConfigProperties.getMaxPay())
+                        .filter(dish -> StrUtil.isNotBlank(dish.getName()))
                         .forEach(dish -> {
-                            AddOrderParam addOrderParam = new AddOrderParam();
-                            JSONObject orderJsonObject = new JSONObject();
-                            orderJsonObject.put("count", 1);
-                            orderJsonObject.put("dishId", dish.getId());
-                            JSONArray orderJsonArray = new JSONArray();
-                            orderJsonArray.add(orderJsonObject);
-                            addOrderParam.setOrder(orderJsonArray.toJSONString());
-
-                            JSONObject remarkJsonObject = new JSONObject();
-                            remarkJsonObject.put("dishId", dish.getId());
-                            remarkJsonObject.put("remark", "");
-                            JSONArray remarkJsonArray = new JSONArray();
-                            remarkJsonArray.add(remarkJsonObject);
-                            addOrderParam.setRemarks(remarkJsonArray.toJSONString());
-
-                            addOrderParam.setCorpAddressRemark("");
+                            AddOrderParam addOrderParam = creadeDefaultAddOrderParam(dish);
                             addOrderParam.setCorpAddressUniqueId(corpAddressUniqueId);
                             addOrderParam.setTargetTime(targetTime);
                             addOrderParam.setTabUniqueId(tabUnionId);
@@ -127,31 +118,87 @@ public class OrderMain {
                             dishOrder.setAddOrderParam(addOrderParam);
                             dishOrderMultimap.put(calendar, dishOrder);
                         });
+                if (dishOrderMultimap.get(calendar).isEmpty()) {
+                    notifyMessage.add("请手动点餐");
+                }
             }
         }
 
+        // 3. 点餐
         dishOrderMultimap.keySet().forEach(calendar -> {
-            DishOrder dos = dishOrderMultimap.get(calendar).stream()
-                    .filter(Objects::nonNull)
-                    .filter(dishOrder -> dishOrder.getDish() != null)
-                    .filter(dishOrder -> dishOrder.getAddOrderParam() != null)
+
+            DishOrder dos = randomSelect(dishFilter(dishOrderMultimap.get(calendar).stream()
                     .filter(dishOrder -> StrUtil.isNotBlank(dishOrder.getDish().getName()))
-                    .filter(dishOrder -> !dishOrder.getDish().getName().contains("辣"))
-                    .findAny().orElse(null);
+                    .collect(Collectors.toList())
+            ));
             if (dos == null) {
                 notifyMessage.add("请手动点餐");
+                return;
             }
             AddOrderParam addOrderParam = dos.getAddOrderParam();
             preorderService.addOrder(member, addOrderParam);
             notifyMessage.add(dos.getDish().getName());
         });
-        // 3. 点餐
-        // 获取餐厅列表
-
 
         // 4. 提醒
         sendMsg(notifyMessage.toArray(new String[0]));
     }
+
+    @Nonnull
+    private AddOrderParam creadeDefaultAddOrderParam(Dish dish) {
+        AddOrderParam addOrderParam = new AddOrderParam();
+        JSONObject orderJsonObject = new JSONObject();
+        orderJsonObject.put("count", 1);
+        orderJsonObject.put("dishId", dish.getId());
+        JSONArray orderJsonArray = new JSONArray();
+        orderJsonArray.add(orderJsonObject);
+        addOrderParam.setOrder(orderJsonArray.toJSONString());
+
+        JSONObject remarkJsonObject = new JSONObject();
+        remarkJsonObject.put("dishId", dish.getId());
+        remarkJsonObject.put("remark", "");
+        JSONArray remarkJsonArray = new JSONArray();
+        remarkJsonArray.add(remarkJsonObject);
+        addOrderParam.setRemarks(remarkJsonArray.toJSONString());
+        addOrderParam.setCorpAddressRemark("");
+        return addOrderParam;
+    }
+
+    @Nonnull
+    private List<DishOrder> dishFilter(@Nullable List<DishOrder> dishOrders) {
+        if (dishOrders == null) {
+            return Lists.newArrayList();
+        }
+        return dishOrders.stream()
+                .filter(dishOrder -> !StrUtil.equalsAny(dishOrder.getDish().getName(),
+                        orderFilterConfigProperties.getDishDeny().toArray(new String[0])
+                        ))
+                .filter(dishOrder -> !StrUtil
+                        .containsAny(dishOrder.getDish().getName(),
+                                orderFilterConfigProperties.getDishNameDeny().toArray(new String[0])))
+                .collect(Collectors.toList());
+    }
+
+
+    @Nonnull
+    private List<Restaurant> filterRestaurant(@Nullable List<Restaurant> restaurantList) {
+        if (restaurantList == null) {
+            return Lists.newArrayList();
+        }
+        return restaurantList.stream().filter(restaurant -> !StrUtil.equalsAny(restaurant
+                        .getName(),
+                orderFilterConfigProperties.getRestaurantDeny().toArray(new String[0]))).collect(Collectors.toList());
+    }
+
+    @Nullable
+    private DishOrder randomSelect(@Nonnull List<DishOrder> dishOrders) {
+        if (CollUtil.isEmpty(dishOrders)) {
+            return null;
+        }
+        Collections.shuffle(dishOrders);
+        return dishOrders.get(0);
+    }
+
 
     private void sendMsg(String[] msg) {
         if (smsMessage == null) {
@@ -196,5 +243,10 @@ public class OrderMain {
         this.oauthService.loginByUsernameAndPassword(member);
         this.orderMain.order(member);
 //        System.exit(0);
+    }
+
+    @Autowired
+    public void setOrderFilterConfigProperties(OrderFilterConfigProperties orderFilterConfigProperties) {
+        this.orderFilterConfigProperties = orderFilterConfigProperties;
     }
 }

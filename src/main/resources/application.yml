@@ -1,6 +1,9 @@
 meican:
   oauth2:
-    clientId: Xqr8w0Uk4ciodqfPwjhav5rdxTaYepD
-    clientSecret: vD11O6xI9bG3kqYRu9OyPAHkRGxLh4E
-
+    client-id: Xqr8w0Uk4ciodqfPwjhav5rdxTaYepD
+    client-secret: vD11O6xI9bG3kqYRu9OyPAHkRGxLh4E
+  filter:
+    dish-name-deny:
+      - 辣
+    max-pay: 1500
 
