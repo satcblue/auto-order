@@ -2,6 +2,7 @@ package cn.satc.order.meican;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.satc.order.meican.dto.Calendar;
@@ -27,10 +28,7 @@ import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -53,14 +51,12 @@ public class OrderMain {
         if (member == null || CharSequenceUtil.isBlank(member.getCookies())) {
             return;
         }
+
+        Date nextDay = Date.from(ZonedDateTime.of(LocalDateTimeUtil.beginOfDay(LocalDateTime.now().plusDays(1)),
+                ZoneOffset.ofHours(8)).toInstant());
+
         // 2. 获取明天可点餐时间段(北京时间)
-        List<Calendar> calendars = preorderService.getCalendarList(member, Date.from(LocalDateTime.of(LocalDate.now(),
-                LocalTime.MIN)
-                .plusDays(1)
-                .withHour(0)
-                .atOffset(ZoneOffset.ofHours(8))
-                .toInstant()
-        ));
+        List<Calendar> calendars = preorderService.getCalendarList(member, nextDay);
         // 过滤非可以点单的时间段
         calendars = calendars.stream()
                 .filter(calendar -> "AVAILABLE".equals(calendar.getStatus()))
