@@ -8,7 +8,7 @@ on:
         default: 'ok'
   schedule:
     # 定时任务，在每天的19点30执行任务
-    - cron: '30 11 * * *'
+    - cron: '30 4 * * *'
 jobs:
   start:
     runs-on: ubuntu-latest
