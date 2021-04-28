@@ -2,11 +2,13 @@
 该自动点餐依赖于github的Actions。现在是在每天的19：30完成第二天的订餐。
 ## 配置步骤
 ### github secrets 变量
+[如何设置github secrets?](https://docs.github.com/cn/actions/reference/encrypted-secrets)
+
 USER_NAME： 登录美餐的手机号码
 
 PASSWORD： 登录美餐的密码
 
-腾讯云短信服务如果没有开通可不填
+腾讯云短信服务,如果没有开通可不填
 
 APP_ID：腾讯云短信的AppId
 
