@@ -25,6 +25,10 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
@@ -41,7 +45,7 @@ import java.util.stream.Collectors;
  */
 @Component
 @Slf4j
-public class OrderMain {
+public class OrderMain implements ApplicationContextAware {
 
     private PreorderService preorderService;
     private List<MessageNotify> messageNotifies;
@@ -51,9 +55,9 @@ public class OrderMain {
 
     private OrderFilterConfigProperties orderFilterConfigProperties;
     private MemberConfigProperties memberConfigProperties;
+    private ApplicationContext applicationContext;
 
 
-    @PostConstruct
     public void init() {
         Member member = new Member();
         member.setUsername(memberConfigProperties.getUsername());
@@ -255,5 +259,11 @@ public class OrderMain {
     @Autowired
     public void setMemberConfigProperties(MemberConfigProperties memberConfigProperties) {
         this.memberConfigProperties = memberConfigProperties;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+        this.init();
     }
 }

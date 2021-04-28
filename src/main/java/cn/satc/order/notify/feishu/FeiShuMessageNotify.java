@@ -41,6 +41,7 @@ public class FeiShuMessageNotify implements MessageNotify {
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("text", text);
+
         FormBody formBody = new FormBody.Builder()
                 .add("msg_type", "text")
                 .add("content", jsonObject.toJSONString())
@@ -49,7 +50,7 @@ public class FeiShuMessageNotify implements MessageNotify {
                 .url(feiShuNotifyProperties.getWebhook()).post(formBody).build();
         try {
             Response response = okHttpClient.newCall(request).execute();
-            log.info(JSONObject.toJSONString(response));
+            log.info("{}, {}", JSONObject.toJSONString(response), JSONObject.toJSONString(response.body()));
         } catch (IOException e) {
             throw new RuntimeException("飞书webhook通知异常");
         }

@@ -1,10 +1,8 @@
 package cn.satc.order.notify.tencent;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReflectUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.satc.order.meican.MemberConfigProperties;
 import cn.satc.order.notify.MessageNotify;
 import com.alibaba.fastjson.JSON;
@@ -42,7 +40,7 @@ public class SmsMessage implements MessageNotify {
 
     @Override
     public void notify(@Nonnull String[] templateParams) {
-        if (canExecute || phone == null || phone.length == 0 || templateParams.length < TEMPLATE_PARAMS_LENGTH) {
+        if (!canExecute || phone == null || phone.length == 0 || templateParams.length < TEMPLATE_PARAMS_LENGTH) {
             return;
         }
         templateParams = Arrays.copyOf(templateParams, TEMPLATE_PARAMS_LENGTH);
@@ -60,7 +58,7 @@ public class SmsMessage implements MessageNotify {
             SendSmsResponse sendSmsResponse = this.smsClient.SendSms(req);
             log.info(JSON.toJSONString(sendSmsResponse));
         } catch (TencentCloudSDKException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
