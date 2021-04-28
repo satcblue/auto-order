@@ -1,9 +1,9 @@
 package cn.satc.order.notify.tencent;
 
 import cn.hutool.core.util.StrUtil;
-import cn.satc.order.notify.tencent.config.SmsConfig;
+import cn.satc.order.notify.MessageNotify;
+import cn.satc.order.notify.tencent.config.TencentSmsConfigProperties;
 import com.alibaba.fastjson.JSON;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.tencentcloudapi.common.Credential;
 import com.tencentcloudapi.common.exception.TencentCloudSDKException;
@@ -11,8 +11,7 @@ import com.tencentcloudapi.sms.v20190711.SmsClient;
 import com.tencentcloudapi.sms.v20190711.models.SendSmsRequest;
 import com.tencentcloudapi.sms.v20190711.models.SendSmsResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -22,21 +21,14 @@ import java.util.List;
  * @since 0.0.1
  */
 @Slf4j
-public class SmsMessage {
+public class SmsMessage implements MessageNotify {
 
-    private final SmsClient smsClient;
-    private final String appId;
-    private final String templateId;
-    private final String sign;
+    private SmsClient smsClient;
+    private String appId;
+    private String templateId;
+    private  String sign;
 
-    public SmsMessage(SmsConfig smsConfig) {
-        this.appId = smsConfig.getAppId();
-        this.templateId = smsConfig.getTemplateId();
-        Credential cred = new Credential(smsConfig.getSecretId(), smsConfig.getSecretKey());
-        this.smsClient = new SmsClient(cred, "ap-guangzhou");
-        this.sign = smsConfig.getSign();
-    }
-
+    @Override
     public void notify(String[] templateParams, String ...phone) {
         List<String> ss = Lists.newArrayList();
         for (String pa : templateParams) {
@@ -54,5 +46,13 @@ public class SmsMessage {
         } catch (TencentCloudSDKException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setTencentSmsConfigProperties(TencentSmsConfigProperties tencentSmsConfigProperties) {
+        this.appId = tencentSmsConfigProperties.getAppId();
+        this.templateId = tencentSmsConfigProperties.getTemplateId();
+        Credential cred = new Credential(tencentSmsConfigProperties.getSecretId(), tencentSmsConfigProperties.getSecretKey());
+        this.smsClient = new SmsClient(cred, "ap-guangzhou");
+        this.sign = tencentSmsConfigProperties.getSign();
     }
 }

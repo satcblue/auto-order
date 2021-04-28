@@ -17,7 +17,7 @@ import cn.satc.order.meican.dto.response.DishResponse;
 import cn.satc.order.meican.dto.response.RestaurantResponse;
 import cn.satc.order.meican.service.OauthService;
 import cn.satc.order.meican.service.PreorderService;
-import cn.satc.order.notify.tencent.SmsMessage;
+import cn.satc.order.notify.MessageNotify;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
@@ -42,13 +42,23 @@ import java.util.stream.Collectors;
 public class OrderMain {
 
     private PreorderService preorderService;
-    private SmsMessage smsMessage;
+    private MessageNotify messageNotify;
     private OauthService oauthService;
 
     private OrderMain orderMain;
 
     private OrderFilterConfigProperties orderFilterConfigProperties;
+    private MemberConfigProperties memberConfigProperties;
 
+
+    @PostConstruct
+    public void init() {
+        Member member = new Member();
+        member.setUsername(memberConfigProperties.getUsername());
+        member.setPassword(memberConfigProperties.getPassword());
+        this.oauthService.loginByUsernameAndPassword(member);
+        this.orderMain.order(member);
+    }
 
     public void order(Member member) {
         if (member == null || CharSequenceUtil.isBlank(member.getCookies())) {
@@ -203,18 +213,18 @@ public class OrderMain {
 
 
     private void sendMsg(String[] msg) {
-        if (smsMessage == null) {
+        if (messageNotify == null) {
             return;
         }
         // 模板值数量不匹配
         if (msg == null || msg.length < 2) {
             return;
         }
-        String phone = System.getProperty("SATC_ORDER_PHONE");
-        if (CharSequenceUtil.isBlank(phone)) {
+        String[] phone = memberConfigProperties.getNotifyPhone().split(",");
+        if (CharSequenceUtil.isAllBlank(phone)) {
             return;
         }
-        smsMessage.notify(Arrays.copyOf(msg, 2), phone);
+        messageNotify.notify(Arrays.copyOf(msg, 2), phone);
     }
 
     @Autowired
@@ -223,8 +233,8 @@ public class OrderMain {
     }
 
     @Autowired
-    public void setSmsMessage(SmsMessage smsMessage) {
-        this.smsMessage = smsMessage;
+    public void setMessageNotify(MessageNotify messageNotify) {
+        this.messageNotify = messageNotify;
     }
 
     @Autowired
@@ -237,18 +247,13 @@ public class OrderMain {
         this.orderMain = orderMain;
     }
 
-    @PostConstruct
-    public void init() {
-        Member member = new Member();
-        member.setUsername(System.getProperty("MEI_CAN_USERNAME"));
-        member.setPassword(System.getProperty("MEI_CAN_PASSWORD"));
-        this.oauthService.loginByUsernameAndPassword(member);
-        this.orderMain.order(member);
-//        System.exit(0);
-    }
-
     @Autowired
     public void setOrderFilterConfigProperties(OrderFilterConfigProperties orderFilterConfigProperties) {
         this.orderFilterConfigProperties = orderFilterConfigProperties;
+    }
+
+    @Autowired
+    public void setMemberConfigProperties(MemberConfigProperties memberConfigProperties) {
+        this.memberConfigProperties = memberConfigProperties;
     }
 }

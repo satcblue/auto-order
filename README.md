@@ -6,7 +6,8 @@ USER_NAME： 登录美餐的手机号码
 
 PASSWORD： 登录美餐的密码
 
-以下服务如果没有开通，随便填值
+腾讯云短信服务如果没有开通可不填
+
 APP_ID：腾讯云短信的AppId
 
 SECRET_ID: 腾讯云短信的密钥id
@@ -17,7 +18,7 @@ MESSAGE_TEMPLATE_ID: 腾讯云短信的短信模板
 
 SIGN：腾讯云短信的签名
 
-PHONE： 需要通知的手机号码（主要手机号码前国内要加 +86）
+PHONE： 需要通知的手机号码（手机号码前国内要加 +86）
 ### 点餐过滤配置
 修改代码文件下的 resource/application.yml
 ```yaml
