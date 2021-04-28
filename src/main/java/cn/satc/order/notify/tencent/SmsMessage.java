@@ -1,6 +1,11 @@
 package cn.satc.order.notify.tencent;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.text.CharSequenceUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.satc.order.meican.MemberConfigProperties;
 import cn.satc.order.notify.MessageNotify;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
@@ -10,7 +15,11 @@ import com.tencentcloudapi.sms.v20190711.SmsClient;
 import com.tencentcloudapi.sms.v20190711.models.SendSmsRequest;
 import com.tencentcloudapi.sms.v20190711.models.SendSmsResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -19,18 +28,27 @@ import java.util.List;
  * @since 0.0.1
  */
 @Slf4j
+@Component
 public class SmsMessage implements MessageNotify {
 
     private SmsClient smsClient;
     private String appId;
     private String templateId;
     private  String sign;
+    private boolean canExecute;
+    private String[] phone;
+
+    private static final int TEMPLATE_PARAMS_LENGTH = 2;
 
     @Override
-    public void notify(String[] templateParams, String ...phone) {
+    public void notify(@Nonnull String[] templateParams) {
+        if (! canExecute || phone.length == 0 || templateParams.length < TEMPLATE_PARAMS_LENGTH) {
+            return;
+        }
+        templateParams = Arrays.copyOf(templateParams, TEMPLATE_PARAMS_LENGTH);
         List<String> ss = Lists.newArrayList();
         for (String pa : templateParams) {
-            ss.add(StrUtil.subWithLength(pa, 0, 12));
+            ss.add(CharSequenceUtil.subWithLength(pa, 0, 12));
         }
         SendSmsRequest req = new SendSmsRequest();
         req.setSmsSdkAppid(this.appId);
@@ -46,11 +64,21 @@ public class SmsMessage implements MessageNotify {
         }
     }
 
+    @Autowired
     public void setTencentSmsConfigProperties(TencentSmsConfigProperties tencentSmsConfigProperties) {
+        if (ObjectUtil.hasNull(ReflectUtil.getFieldsValue(tencentSmsConfigProperties))) {
+            canExecute = false;
+            return;
+        }
+        canExecute = true;
         this.appId = tencentSmsConfigProperties.getAppId();
         this.templateId = tencentSmsConfigProperties.getTemplateId();
         Credential cred = new Credential(tencentSmsConfigProperties.getSecretId(), tencentSmsConfigProperties.getSecretKey());
         this.smsClient = new SmsClient(cred, "ap-guangzhou");
         this.sign = tencentSmsConfigProperties.getSign();
+    }
+    @Autowired
+    public void setMemberConfigProperties(MemberConfigProperties memberConfigProperties) {
+        this.phone = memberConfigProperties.getNotifyPhone().split(",");
     }
 }

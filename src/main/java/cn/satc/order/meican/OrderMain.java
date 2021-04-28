@@ -23,6 +23,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -39,10 +40,11 @@ import java.util.stream.Collectors;
  * @since 0.0.1
  */
 @Component
+@Slf4j
 public class OrderMain {
 
     private PreorderService preorderService;
-    private MessageNotify messageNotify;
+    private List<MessageNotify> messageNotifies;
     private OauthService oauthService;
 
     private OrderMain orderMain;
@@ -213,18 +215,16 @@ public class OrderMain {
 
 
     private void sendMsg(String[] msg) {
-        if (messageNotify == null) {
+        if (this.messageNotifies == null || msg == null) {
             return;
         }
-        // 模板值数量不匹配
-        if (msg == null || msg.length < 2) {
-            return;
+        for (MessageNotify messageNotify : this.messageNotifies) {
+            try {
+                messageNotify.notify(msg);
+            } catch (Exception e) {
+                log.error("发生错误", e);
+            }
         }
-        String[] phone = memberConfigProperties.getNotifyPhone().split(",");
-        if (CharSequenceUtil.isAllBlank(phone)) {
-            return;
-        }
-        messageNotify.notify(Arrays.copyOf(msg, 2), phone);
     }
 
     @Autowired
@@ -233,8 +233,8 @@ public class OrderMain {
     }
 
     @Autowired
-    public void setMessageNotify(MessageNotify messageNotify) {
-        this.messageNotify = messageNotify;
+    public void setMessageNotifies(List<MessageNotify> messageNotifies) {
+        this.messageNotifies = messageNotifies;
     }
 
     @Autowired

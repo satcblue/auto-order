@@ -1,5 +1,7 @@
 package cn.satc.order.notify;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author T1940-林浩捷
  * @date 2021/4/28
@@ -11,5 +13,5 @@ public interface MessageNotify {
      * @param templateParams 模板变量
      * @param target 目的地
      */
-    void notify(String[] templateParams, String ...target);
+    void notify(String[] templateParams);
 }
