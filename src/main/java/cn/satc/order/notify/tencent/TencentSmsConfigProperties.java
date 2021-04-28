@@ -1,4 +1,4 @@
-package cn.satc.order.notify.tencent.config;
+package cn.satc.order.notify.tencent;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

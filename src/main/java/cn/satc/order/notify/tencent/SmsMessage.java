@@ -2,7 +2,6 @@ package cn.satc.order.notify.tencent;
 
 import cn.hutool.core.util.StrUtil;
 import cn.satc.order.notify.MessageNotify;
-import cn.satc.order.notify.tencent.config.TencentSmsConfigProperties;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.tencentcloudapi.common.Credential;
@@ -11,7 +10,6 @@ import com.tencentcloudapi.sms.v20190711.SmsClient;
 import com.tencentcloudapi.sms.v20190711.models.SendSmsRequest;
 import com.tencentcloudapi.sms.v20190711.models.SendSmsResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 

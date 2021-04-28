@@ -1,6 +1,4 @@
-package cn.satc.order.notify.tencent;
-
-import cn.satc.order.notify.MessageNotify;
+package cn.satc.order.notify;
 
 /**
  * @author T1940-林浩捷
