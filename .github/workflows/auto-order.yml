@@ -8,7 +8,7 @@ on:
         default: 'ok'
   schedule:
     # 定时任务，在每天的19点30执行任务
-    - cron: '30 11 * * *'
+    - cron: '45 4 * * *'
 jobs:
   start:
     runs-on: ubuntu-latest
@@ -35,4 +35,4 @@ jobs:
           TENCENT_SMS_MESSAGE_TEMPLATE_ID: ${{ secrets.MESSAGE_TEMPLATE_ID }}
           TENCENT_SMS_SIGN: ${{ secrets.SIGN }}
           MEI_CAN_NOTIFY_PHONE: ${{ secrets.PHONE }}
-        run: mvn install -Dmaven.test.skip=true exec:java -Dexec.mainClass="cn.satc.order.AutoOrderApplication" -Dexec:classpathScope=runtime -Dmeican.member.username=$MEI_CAN_USERNAME -Dmeican.member.password=$MEI_CAN_PASSWORD -Dmeican.member.notifu-phone=$MEI_CAN_NOTIFY_PHONE -Dtencent.sms.app-id=$TENCENT_SMS_APP_ID -Dtencent.sms.secret-id=$TENCETN_SECRET_ID -Dtencent.sms.secret-key=$TENCENT_SECRET_KEY -Dtencent.sms.template-id=$TENCENT_SMS_MESSAGE_TEMPLATE_ID -Dtencent.sms.sign=$TENCENT_SMS_SIGN
+        run: mvn install -Dmaven.test.skip=true exec:java -Dexec.mainClass="cn.satc.order.AutoOrderApplication" -Dexec:classpathScope=runtime -Dmeican.member.username=$MEI_CAN_USERNAME -Dmeican.member.password=$MEI_CAN_PASSWORD -Dmeican.member.notify-phone=$MEI_CAN_NOTIFY_PHONE -Dtencent.sms.app-id=$TENCENT_SMS_APP_ID -Dtencent.sms.secret-id=$TENCETN_SECRET_ID -Dtencent.sms.secret-key=$TENCENT_SECRET_KEY -Dtencent.sms.template-id=$TENCENT_SMS_MESSAGE_TEMPLATE_ID -Dtencent.sms.sign=$TENCENT_SMS_SIGN
