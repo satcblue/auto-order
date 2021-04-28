@@ -8,9 +8,9 @@ USER_NAME： 登录美餐的手机号码
 
 PASSWORD： 登录美餐的密码
 
+以下参数：如果没有开通可不填（用于提醒）
 
-
-腾讯云短信服务,如果没有开通可不填
+FEI_SHU_NOTIFY_WEBHOOK: 飞书机器人的webhook
 
 APP_ID：腾讯云短信的AppId
 
