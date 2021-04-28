@@ -42,7 +42,7 @@ public class SmsMessage implements MessageNotify {
 
     @Override
     public void notify(@Nonnull String[] templateParams) {
-        if (! canExecute || phone.length == 0 || templateParams.length < TEMPLATE_PARAMS_LENGTH) {
+        if (canExecute || phone == null || phone.length == 0 || templateParams.length < TEMPLATE_PARAMS_LENGTH) {
             return;
         }
         templateParams = Arrays.copyOf(templateParams, TEMPLATE_PARAMS_LENGTH);
