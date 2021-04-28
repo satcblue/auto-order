@@ -6,7 +6,6 @@ on:
         description: '只是测试而已'
         required: false
         default: 'ok'
-  push:
   schedule:
     # 定时任务，在每天的19点30执行任务
     - cron: '30 11 * * *'
