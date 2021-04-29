@@ -6,7 +6,7 @@
 1. 美餐账号 username 为绑定的手机号
 2. 飞书webhook配置
 3. 腾讯云短信配置
-3. 配置完之后，进入Actions，手动运行工作流一次（如下图），确保自己配置的参数没有错误和使得定时任务能正常执行。
+3. 配置完之后，进入Actions，手动运行工作流一次，确保自己配置的参数没有错误和使得定时任务能正常执行。
 
 ### github secrets 变量
 [如何设置github secrets?](https://docs.github.com/cn/actions/reference/encrypted-secrets)
