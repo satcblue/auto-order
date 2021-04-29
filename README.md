@@ -1,4 +1,6 @@
 # 美餐自动点餐
+![自动点餐](https://github.com/satcblue/auto-order/actions/workflows/auto-order.yml/badge.svg?branch=main)
+
 该自动点餐依赖于github的Actions。现在是在每天的19：30完成第二天的订餐。
 ## 配置步骤
 1. Fork 一份到自己的仓库。（页面右上角）
