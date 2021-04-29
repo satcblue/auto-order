@@ -35,5 +35,5 @@ jobs:
           TENCENT_SMS_MESSAGE_TEMPLATE_ID: ${{ secrets.MESSAGE_TEMPLATE_ID }}
           TENCENT_SMS_SIGN: ${{ secrets.SIGN }}
           MEI_CAN_NOTIFY_PHONE: ${{ secrets.PHONE }}
-          FEI_SHU_NOTIFY_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          FEI_SHU_NOTIFY_WEBHOOK: ${{ secrets.FEI_SHU_NOTIFY_WEBHOOK }}
         run: mvn install -Dmaven.test.skip=true exec:java -Dexec.mainClass="cn.satc.order.AutoOrderApplication" -Dexec:classpathScope=runtime -Dmeican.member.username=$MEI_CAN_USERNAME -Dmeican.member.password=$MEI_CAN_PASSWORD -Dmeican.member.notify-phone=$MEI_CAN_NOTIFY_PHONE -Dtencent.sms.app-id=$TENCENT_SMS_APP_ID -Dtencent.sms.secret-id=$TENCETN_SECRET_ID -Dtencent.sms.secret-key=$TENCENT_SECRET_KEY -Dtencent.sms.template-id=$TENCENT_SMS_MESSAGE_TEMPLATE_ID -Dtencent.sms.sign=$TENCENT_SMS_SIGN -Dfeishu.notify.webhook=$FEI_SHU_NOTIFY_WEBHOOK
