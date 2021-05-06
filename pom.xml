@@ -40,7 +40,6 @@
 			<version>4.0.11</version>
 		</dependency>
 
-
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
@@ -88,17 +87,9 @@
 	</build>
 	<repositories>
 		<repository>
-			<!-- Maven 自带的中央仓库使用的Id为central 如果其他的仓库声明也是用该Id
-            就会覆盖中央仓库的配置 --> <id>mvnrepository</id>
-			<name>mvnrepository</name>
-			<url>http://www.mvnrepository.com/</url>
-			<layout>default</layout>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
+			<id>aliyun</id>
+			<name>ali yun</name>
+			<url>http://maven.aliyun.com/nexus/content/groups/public</url>
 		</repository>
 	</repositories>
 </project>
