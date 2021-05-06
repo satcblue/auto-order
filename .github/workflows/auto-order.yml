@@ -17,11 +17,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - name: 设置缓存
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
       - name: 执行点餐
         env:
           MEI_CAN_USERNAME: ${{ secrets.USER_NAME }}
