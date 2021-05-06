@@ -88,8 +88,8 @@
 	</build>
 	<repositories>
 		<repository>
-			<id>aliyun</id>
-			<name>ali yun</name>
+			<id>central</id>
+			<name>aliyun</name>
 			<url>http://maven.aliyun.com/nexus/content/groups/public</url>
 		</repository>
 	</repositories>
