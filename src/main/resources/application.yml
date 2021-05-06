@@ -6,6 +6,7 @@ meican:
     dish-name-deny:
       - 辣
       - 菇
+      - 排骨
     max-pay: 1500
     restaurant-deny:
       - 1234
