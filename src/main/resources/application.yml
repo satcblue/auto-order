@@ -7,6 +7,7 @@ meican:
       - 辣
       - 菇
       - 排骨
+      - 粥
     max-pay: 1500
     restaurant-deny:
       - 1234
